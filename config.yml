@@ -1,0 +1,11 @@
+# How much the player should go upwards
+upward-velocity: 1.0
+# How far the player should go
+forward-velocity: 1.7
+
+# TIP: For a list of material names, see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+
+# Launcher bottom block
+launcher-bottom-material: GOLD_BLOCK
+# Launcher plate material. If you do not want any, specify 'AIR'
+launcher-plate-material: GOLD_PLATE

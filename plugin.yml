@@ -1,0 +1,11 @@
+name: LauncherX
+main: com.robinmc.launcherx.Main
+version: 1.0.0
+author: Derkades
+description: "A launcher plugin that's better than the others. Why? Because I made it, and because the name contains an 'X' for EXTREME"
+
+commands:
+  launcherx:
+    usage: '/launcherx reload or /launcherx rl'
+    description: LauncherX reload command
+    aliases: launcher
