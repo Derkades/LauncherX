@@ -44,6 +44,8 @@ public class Main extends JavaPlugin implements Listener {
 		if (!loadValuesFromConfig()){
 			getLogger().log(Level.WARNING, "Launcher bottom block material or launcher plate material is incorrect.");
 		}
+		
+		Config.reloadConfig();
 	}
 	
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
