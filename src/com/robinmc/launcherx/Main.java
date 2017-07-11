@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.robinmc.launcherx.utils.Config;
@@ -72,13 +73,21 @@ public class Main extends JavaPlugin implements Listener {
 	public static void launch(Player player, double upwardVelocity, double forwardVelocity){
 		player.setVelocity(player.getLocation().getDirection().multiply(forwardVelocity));
 		player.setVelocity(new Vector(player.getVelocity().getX(), upwardVelocity, player.getVelocity().getZ()));
+		
+		
+		
+		new BukkitRunnable() {
+			public void run() {
+				
+			}
+		}.runTaskTimer(Main.getPlugin(), 0, 5);
 	}
 	
 	public static class ReloadCommand implements CommandExecutor {
 		
 		@Override
 		public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-			if (args.length == 1 && (args[1].equalsIgnoreCase("rl") || args[1].equalsIgnoreCase("reload"))){
+			if (args.length == 1 && (args[0].equalsIgnoreCase("rl") || args[0].equalsIgnoreCase("reload"))){
 				Config.reloadConfig();
 				
 				//Re-initialise values from config, because it has been updated.
