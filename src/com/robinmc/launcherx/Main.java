@@ -76,7 +76,7 @@ public class Main extends JavaPlugin implements Listener {
 					this.cancel();
 				}
 			}
-		}.runTaskTimer(this, 0, 1);
+		}.runTaskTimer(this, 10, 1);
 	}
 	
 }
