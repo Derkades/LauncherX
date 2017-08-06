@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Main extends JavaPlugin implements Listener {
@@ -66,12 +67,16 @@ public class Main extends JavaPlugin implements Listener {
 		player.setVelocity(player.getLocation().getDirection().multiply(forwardVelocity));
 		player.setVelocity(new Vector(player.getVelocity().getX(), upwardVelocity, player.getVelocity().getZ()));
 		
-		getServer().getScheduler().runTaskTimer(this, () -> {
-			//Keep resetting fall distance while player is in air
-			if (player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR) {
-				player.setFallDistance(0.0f);
+		new BukkitRunnable() {
+			public void run() {
+				//Keep resetting fall distance while player is in air
+				if (player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR) {
+					player.setFallDistance(0.0f);
+				} else {
+					this.cancel();
+				}
 			}
-		}, 0, 1);
+		}.runTaskTimer(this, 0, 1);
 	}
 	
 }
