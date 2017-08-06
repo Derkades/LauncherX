@@ -4,6 +4,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -64,6 +65,13 @@ public class Main extends JavaPlugin implements Listener {
 	public void launch(Player player, double upwardVelocity, double forwardVelocity){
 		player.setVelocity(player.getLocation().getDirection().multiply(forwardVelocity));
 		player.setVelocity(new Vector(player.getVelocity().getX(), upwardVelocity, player.getVelocity().getZ()));
+		
+		getServer().getScheduler().runTaskTimer(this, () -> {
+			//Keep resetting fall distance while player is in air
+			if (player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR) {
+				player.setFallDistance(0.0f);
+			}
+		}, 0, 1);
 	}
 	
 }
