@@ -3,6 +3,7 @@ package com.robinmc.launcherx;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -15,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.robinmc.launcherx.hooks.aac.AACListener;
 import com.robinmc.launcherx.hooks.ncp.NoCheatPlus;
 import com.robinmc.launcherx.hooks.ncp.NoCheatPlusDisabled;
 import com.robinmc.launcherx.hooks.ncp.NoCheatPlusEnabled;
@@ -22,6 +24,7 @@ import com.robinmc.launcherx.hooks.ncp.NoCheatPlusEnabled;
 public class Main extends JavaPlugin implements Listener {
 	
 	private static NoCheatPlus ncp;
+	private static AACListener aac;
 	
 	private static Main plugin;
 	
@@ -43,6 +46,19 @@ public class Main extends JavaPlugin implements Listener {
 		getCommand("launcherx").setExecutor(new ReloadCommand());
 		
 		super.saveDefaultConfig();
+		
+		boolean enableNcp = getConfig().getBoolean("enable-ncp-hook");
+		if (enableNcp) {
+			ncp = new NoCheatPlusEnabled();
+		} else {
+			ncp = new NoCheatPlusDisabled();
+		}
+		
+		boolean enableAac = getConfig().getBoolean("enable-aac-hook");
+		if (enableAac) {
+			aac = new AACListener();
+			Bukkit.getPluginManager().registerEvents(aac, this);
+		}
 		
 		//Initialise values from config.
 		if (!loadValuesFromConfig()){
@@ -74,15 +90,6 @@ public class Main extends JavaPlugin implements Listener {
 		LAUNCHER_PLATE_MATERIAL = Material.getMaterial(getConfig().getString("launcher-plate-material"));
 		BLACKLISTED_WORLDS = getConfig().getStringList("world-blacklist");
 		
-		boolean enableNcp = getConfig().getBoolean("enable-ncp-hook");
-		if (enableNcp) {
-			ncp = new NoCheatPlusEnabled();
-		} else {
-			ncp = new NoCheatPlusDisabled();
-		}
-		
-		boolean enableAac = 
-		
 		return LAUNCHER_BOTTOM_MATERIAL != null && LAUNCHER_PLATE_MATERIAL != null;
 	}
 	
@@ -91,6 +98,9 @@ public class Main extends JavaPlugin implements Listener {
 		player.setVelocity(new Vector(player.getVelocity().getX(), upwardVelocity, player.getVelocity().getZ()));
 		
 		ncp.exempt(player);
+		if (aac != null) {
+			aac.playersInAir.add(player.getUniqueId());
+		}
 		
 		new BukkitRunnable() {
 			public void run() {
@@ -100,6 +110,9 @@ public class Main extends JavaPlugin implements Listener {
 				} else {
 					this.cancel();
 					ncp.unexempt(player);
+					if (aac != null) {
+						aac.playersInAir.remove(player.getUniqueId());
+					}
 				}
 			}
 		}.runTaskTimer(this, 10, 1);

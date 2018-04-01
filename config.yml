@@ -10,9 +10,12 @@ launcher-bottom-material: GOLD_BLOCK
 # Launcher plate material. If you do not want any, specify 'AIR'
 launcher-plate-material: GOLD_PLATE
 
-# Hook into NoCheatPlus to exempt players from checks while they are in the air
-enable-ncp-hook: false
-
 # Prevent LauncherX from working in the specified worlds
 world-blacklist:
 - 'skywars'
+
+# Hook into NoCheatPlus to exempt players from checks while they are in the air
+enable-ncp-hook: false
+
+# Hook into Advanced Anti Cheap to exempt players from checks while they are in the air
+enable-aac-hook: false

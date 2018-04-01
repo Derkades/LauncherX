@@ -1,8 +1,9 @@
 name: LauncherX
 main: com.robinmc.launcherx.Main
-version: 1.1.0
+version: 1.2.0
 author: Derkades
 description: "A launcher plugin that's better than the others. Why? Because I made it, and because the name contains an 'X' for EXTREME"
+softdepend: [AAC, NoCheatPlus]
 
 commands:
   launcherx:
