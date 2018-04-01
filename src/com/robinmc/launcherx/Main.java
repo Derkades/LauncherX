@@ -1,5 +1,6 @@
 package com.robinmc.launcherx;
 
+import java.util.List;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
@@ -14,7 +15,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.robinmc.launcherx.hooks.ncp.NoCheatPlus;
+import com.robinmc.launcherx.hooks.ncp.NoCheatPlusDisabled;
+import com.robinmc.launcherx.hooks.ncp.NoCheatPlusEnabled;
+
 public class Main extends JavaPlugin implements Listener {
+	
+	private static NoCheatPlus ncp;
 	
 	private static Main plugin;
 	
@@ -22,6 +29,7 @@ public class Main extends JavaPlugin implements Listener {
 	private static double FORWARD_VELOCITY;
 	private static Material LAUNCHER_BOTTOM_MATERIAL;
 	private static Material LAUNCHER_PLATE_MATERIAL;
+	private static List<String> BLACKLISTED_WORLDS;
 	
 	public static Main getPlugin(){
 		return plugin;
@@ -46,6 +54,11 @@ public class Main extends JavaPlugin implements Listener {
 	public void onMove(PlayerMoveEvent event){
 		Player player = event.getPlayer();
 		Location location = player.getLocation();
+		
+		if (BLACKLISTED_WORLDS.contains(location.getWorld().getName())) {
+			return;
+		}
+		
 		Material block = location.getBlock().getRelative(0, -1, 0).getType();
 		Material plate = location.getBlock().getType();
 		  
@@ -59,13 +72,25 @@ public class Main extends JavaPlugin implements Listener {
 		FORWARD_VELOCITY = getConfig().getDouble("forward-velocity");
 		LAUNCHER_BOTTOM_MATERIAL = Material.getMaterial(getConfig().getString("launcher-bottom-material"));
 		LAUNCHER_PLATE_MATERIAL = Material.getMaterial(getConfig().getString("launcher-plate-material"));
+		BLACKLISTED_WORLDS = getConfig().getStringList("world-blacklist");
+		
+		boolean enableNcp = getConfig().getBoolean("enable-ncp-hook");
+		if (enableNcp) {
+			ncp = new NoCheatPlusEnabled();
+		} else {
+			ncp = new NoCheatPlusDisabled();
+		}
+		
+		boolean enableAac = 
 		
 		return LAUNCHER_BOTTOM_MATERIAL != null && LAUNCHER_PLATE_MATERIAL != null;
 	}
 	
-	public void launch(Player player, double upwardVelocity, double forwardVelocity){
+	public void launch (Player player, double upwardVelocity, double forwardVelocity){
 		player.setVelocity(player.getLocation().getDirection().multiply(forwardVelocity));
 		player.setVelocity(new Vector(player.getVelocity().getX(), upwardVelocity, player.getVelocity().getZ()));
+		
+		ncp.exempt(player);
 		
 		new BukkitRunnable() {
 			public void run() {
@@ -74,6 +99,7 @@ public class Main extends JavaPlugin implements Listener {
 					player.setFallDistance(0.0f);
 				} else {
 					this.cancel();
+					ncp.unexempt(player);
 				}
 			}
 		}.runTaskTimer(this, 10, 1);
