@@ -17,5 +17,5 @@ world-blacklist:
 # Hook into NoCheatPlus to exempt players from checks while they are in the air
 enable-ncp-hook: false
 
-# Hook into Advanced Anti Cheap to exempt players from checks while they are in the air
+# Hook into Advanced Anti Cheat to exempt players from checks while they are in the air
 enable-aac-hook: false
